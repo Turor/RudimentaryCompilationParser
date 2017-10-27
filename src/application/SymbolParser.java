@@ -7,10 +7,10 @@ import java.util.Scanner;
 import java.util.Stack;
 
 /**
- * Homework 8: SymbolParser Class
+ * Homework 9: SymbolParser Class
  * @author Dr. T
  * @modified Matthew M
- * @version Homework 8: Opening and Closing Symbols
+ * @version Homework 9: Opening and Closing Symbols
  *
  */
 public class SymbolParser {
@@ -20,11 +20,23 @@ public class SymbolParser {
 
 	/** This string gets built with all matching pairs */
 	private String symbolMatchingText;
+	
+	/**Instance variable which determines whether or not the parser is in a block comment*/
+	private boolean inBlockComment;
+	
+	/**Instance variable which controls whether or not the parser is in a line comment*/
+	private boolean inLineComment;
+	
+	/**Instance variable which controls whether or not the parser is in a string*/
+	private boolean inString;
 
 	/** Constructor*/
 	public SymbolParser(){
 		originalText = "";
 		symbolMatchingText = "";
+		inBlockComment = false;
+		inLineComment = false;
+		inString = false;
 	}
 
 	/** This method gets called when a new file is opened 
@@ -32,32 +44,69 @@ public class SymbolParser {
 	 */
 	public void parseFile(File inputFile){
 		Scanner input;
+		inBlockComment = false;
+		inLineComment = false;
+		inString = false;
 		try {
 			input = new Scanner(inputFile);
 			String symbols = "";
+			
+			//I stand by this decision
 			ArrayList<Integer> lines = new ArrayList<Integer>();
 
+			
 			// Reading in one line at a time
 			int lineNumber = 1;
 			while (input.hasNextLine()){
 
 				// Read in a whole line
 				String line = input.nextLine();
-
+				
+				//Reset the inLineComment state since this is a new line
+				inLineComment = false;
+				
+				//Adds the line number to the beginning of each new line
+				originalText += lineNumber + ": ";
+				
 				// Iterate a character at a time
 				for (int i = 0; i < line.length(); i++){
-					originalText = originalText + lineNumber + ": " + line.charAt(i) + "\n";
-					if(isSymbol(line.charAt(i))) {
+					originalText = originalText + line.charAt(i); 
+					
+					if(inBlockComment||inLineComment||inString) {
+						//Exit conditions for blocks and strings
+						//Block -> String
+						if(i > 0 && line.charAt(i-1) == '*' && line.charAt(i) == '/')
+							inBlockComment = false;
+						else if(line.charAt(i) == '"' )
+							if(i > 0 && line.charAt(i-1) != 92)
+								inString = false;
+							else if( i == 0)
+								inString = false;
+					}else {
+						//Entrance conditions for block and line comments, and strings.
+						//Block -> Line -> String
+						if(i > 0 && line.charAt(i-1) == '/' && line.charAt(i) == '*')
+							inBlockComment = true;
+						else if(i > 0 && line.charAt(i) == '/' && line.charAt(i-1) == '/')
+							inLineComment = true;
+						else if(line.charAt(i) == '"')
+							inString = true;
+					}
+					
+					//Updates the symbol string and the lines arrayList
+					if(isSymbol(line.charAt(i))&&!inBlockComment&&!inLineComment&&!inString) {
 						symbols = symbols + line.charAt(i);
 						lines.add(lineNumber);
 					}
-
 				}
 
+				
+				originalText += "\n";
 				//Increases the line number because now the loop is moving to the next line
 				lineNumber++;
 			}
 			buildSymbolText(symbols, lines);
+			
 
 		}
 		catch (FileNotFoundException e) {

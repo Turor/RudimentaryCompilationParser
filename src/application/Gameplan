@@ -1,0 +1,47 @@
+Goal: Alright, so we're back working on the rudimentary compiler again for a follow up assignment. Today's goal is to
+improve the parser's functionality. The goal is to ignore line comments, block comments, and string literals.
+Line comments are indicated by // and continue until the next line delineation. Meanwhile, a block comment is
+indicated by a /* and continues until */. The final one, the string literal is started with a " and ends with
+another ". The parser needs to also be able to recognize when a double quotation mark is a part of the string
+literal so for that, we'll use a \ to indicate that the next char should be ignored when determining states.
+
+Approach:
+I feel like this behavior can be kept track through three different boolean states (My professor hinted as much).
+and to determine each of these states, my conditionals need to be able to check two characters at the same time.
+Java's default scanner object can have some pretty tricky behavior and so I think I'll create a char instance
+variable that will keep track of the previous character encountered and the conditionals will compare against
+both the current character and also the previous character to set which state the system should be in.
+
+For line comments, the if conditional needs only the current character and will check to see if the current
+character is a newline character (which I believe is ASCII 10). If it is, then I can set the inLineComment state
+to false and stop ignoring the text.
+
+For block comments, the if conditional needs both the current and the previous. The first if will check to see
+if the previous char is equal to '/' and then if the current char is equal to '*'. If it is, then it should set
+the in block comment state to true. That state will be turned to false if the parser encounters a situation
+where the previous char is equal to '*' and the current char is equal to '/'. If that is the case, the inBlock
+condition will become false.
+
+For String Literals, the if conditional needs to check for the presence of a " to set the condition to true and
+then needs to check for if the previous is equal to '\' and then the current is equal to '"' in order to
+include quotation marks in a string literal or rather, the program should actually only check previous when it
+encounters a " so maybe I can take advantage of logic short circuiting? if " & prev == '\' This should only
+check the second condition when the first one is true. The issue with this is that sometimes it can trigger
+this condition without already being in a string literal. However, this should simply be an error in the first
+place since that means the \ character is free floating in the middle of no where. 
+
+Okay now that we know what to check for, we need to make sure we aren't trying to enable different kinds of
+comments when we're already within a comment. Say we have a line comment  and a block comment is created and
+closed within the same line comment, we don't have to worry about that block comment. So for this, I think I'll
+create an umbrella if statement which controls the stuff which assigns the true values, and then in the else
+statement contain the false controllers. I might also make these their own methods and have the different
+states be instance variables. Alrighty, here we go :)
+
+Well the plan changed a little as we got into it but overall it worked out pretty smoothly. Thanks for checking
+this video out xD I really enjoy these types of videos because it helps me work through the problems I'm solving
+because I figure I need to be able to explain the process to someone who's watching the time lapse. If I can't
+do that, then I probably should take a bit more time to think about the problem. Even if no one watches the
+video it's enhancing my learning lol. Anyways, hope you enjoyed the video and could maybe follow along.
+
+
+

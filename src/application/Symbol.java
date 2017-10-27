@@ -1,9 +1,9 @@
 package application;
 
 /**
- * Homework 8: Symbol Class
+ * Homework 9: Symbol Class
  * @author Matthew M
- * @version Homework 08: Opening and Closing Symbols
+ * @version Homework 09: Opening and Closing Symbols
  *
  */
 public class Symbol {

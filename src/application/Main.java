@@ -14,8 +14,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
 /**
- * Homework 8: Main
- * @version Homework 8: Opening and Closing Symbols
+ * Homework 9: Main
+ * @version Homework 9: Opening and Closing Symbols
  * @author Dr. T
  * @modified Matthew M
  *
@@ -52,7 +52,6 @@ public class Main extends Application implements EventHandler<ActionEvent>
 			Scene scene = new Scene(root,600,600);
 			primaryStage.setTitle("HW 8: Parsing for Matching Opening and Closing Symbols");
 			
-
 			root.setPrefSize(500,  500);
 			
 			// Adding the left text area
